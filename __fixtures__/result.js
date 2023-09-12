@@ -5,4 +5,5 @@ const result = `{
   - timeout: 50
   + timeout: 20
   + verbose: true
-}`
+}`;
+export default result;
