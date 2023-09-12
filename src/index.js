@@ -13,7 +13,7 @@ const genDiff = (filepath1, filepath2) => {
   const result = [];
   result.push('{');
 
-  for (const key of keys) {
+  keys.map((key) => {
     if (_.has(dataParse1, key) && !_.has(dataParse2, key)) {
       result.push(`  - ${key}: ${dataParse1[key]}`);
     } else if (!_.has(dataParse1, key) && _.has(dataParse2, key)) {
@@ -26,7 +26,8 @@ const genDiff = (filepath1, filepath2) => {
         result.push(`  + ${key}: ${dataParse2[key]}`);
       }
     }
-  }
+    return null;
+  });
 
   result.push('}');
   return result.join('\n');
