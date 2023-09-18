@@ -6,6 +6,7 @@ import genDiff from '../src/index.js';
 const program = new Command();
 
 program
+  .option('-v, --version', 'output the version number')
   .option('-f, --format <type>', 'output format')
   .argument('<filepath1>')
   .argument('<filepath2>')
