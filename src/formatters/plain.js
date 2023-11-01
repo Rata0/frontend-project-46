@@ -48,4 +48,4 @@ export default function makePlain(data) {
   const flatten = _.flattenDeep(result);
   const elFiltering = flatten.filter((el) => el);
   return elFiltering.join('\n');
-};
+}
