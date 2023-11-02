@@ -17,20 +17,20 @@ const checkVal = (value) => {
 };
 
 const plainFormatDiff = (tree) => {
-  const iters = (node, path) => node.map((child) => {
+  const iter = (node, path) => node.map((child) => {
     const currectPath = getPath([path, child.key]);
     switch (child.type) {
       case 'nested': {
-        return iters(child.children, currectPath);
+        return iter(child.children, currectPath);
       }
       case 'added': {
-        return `Property ${currectPath} was added with value: ${checkVal.value}`;
+        return `Property '${currectPath}' was added with value: ${checkVal(child.value)}`;
       }
       case 'removed': {
-        return `Property ${currectPath} was removed`;
+        return `Property '${currectPath}' was removed`;
       }
       case 'changed': {
-        return `Property ${currectPath} was updated. From ${checkVal(child.value)} to ${checkVal(child.value2)}`;
+        return `Property '${currectPath}' was updated. From ${checkVal(child.value)} to ${checkVal(child.value2)}`;
       }
       case 'unchanged': {
         return null;
@@ -40,7 +40,7 @@ const plainFormatDiff = (tree) => {
       }
     }
   });
-  return iters(tree.children, []);
+  return iter(tree.children, []);
 };
 
 export default function makePlain(data) {

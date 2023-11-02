@@ -1,9 +1,9 @@
 import _ from 'lodash';
 
 const buildAST = (data1, data2) => {
-  const keysSort = _.sortBy(_.union(_.keys(data1), _.keys(data2)));
+  const sortedKeys = _.sortBy(_.union(_.keys(data1), _.keys(data2)));
 
-  const result = keysSort.map((key) => {
+  const children = sortedKeys.map((key) => {
     if (!_.has(data1, key)) {
       return {
         type: 'added',
@@ -20,7 +20,7 @@ const buildAST = (data1, data2) => {
       };
     }
 
-    if (!_.isPlainObject(data1[key]) && _.isPlainObject(data2[key])) {
+    if (_.isPlainObject(data1[key]) && _.isPlainObject(data2[key])) {
       return {
         type: 'nested',
         key,
@@ -43,7 +43,7 @@ const buildAST = (data1, data2) => {
       value2: data2[key],
     };
   });
-  return result;
+  return children;
 };
 
 const getDifferenceTree = (data1, data2) => ({
