@@ -2,7 +2,7 @@ import _ from 'lodash';
 
 const getPath = (nodeNames) => nodeNames.flat().join('.');
 
-const checkVal = (value) => {
+const getFormattedValue = (value) => {
   switch (typeof value) {
     case 'object': {
       return !value ? 'null' : '[complex value]';
@@ -16,36 +16,34 @@ const checkVal = (value) => {
   }
 };
 
-const plainFormatDiff = (tree) => {
+export function makePlainDiff(tree) {
   const iter = (node, path) => node.map((child) => {
-    const currectPath = getPath([path, child.key]);
+    const currentPath = getPath([path, child.key]);
     switch (child.type) {
       case 'nested': {
-        return iter(child.children, currectPath);
+        return iter(child.children, currentPath);
       }
       case 'added': {
-        return `Property '${currectPath}' was added with value: ${checkVal(child.value)}`;
+        return `Property '${currentPath}' was added with value: ${getFormattedValue(child.value)}`;
       }
       case 'removed': {
-        return `Property '${currectPath}' was removed`;
+        return `Property '${currentPath}' was removed`;
       }
       case 'changed': {
-        return `Property '${currectPath}' was updated. From ${checkVal(child.value)} to ${checkVal(child.value2)}`;
+        return `Property '${currentPath}' was updated. From ${getFormattedValue(child.oldValue)} to ${getFormattedValue(child.newValue)}`;
       }
       case 'unchanged': {
         return null;
       }
       default: {
-        throw Error('Incorrect data');
+        throw Error('Uncorrect data');
       }
     }
   });
   return iter(tree.children, []);
-};
+}
 
 export default function makePlain(data) {
-  const result = plainFormatDiff(data);
-  const flatten = _.flattenDeep(result);
-  const elFiltering = flatten.filter((el) => el);
-  return elFiltering.join('\n');
+  const result = makePlainDiff(data);
+  return _.flattenDeep(result).filter((el) => el).join('\n');
 }

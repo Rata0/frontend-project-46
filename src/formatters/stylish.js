@@ -8,7 +8,7 @@ const braceIndent = (depth) => indent.repeat(indentSize * depth - indentSize);
 const joinStrings = (lines, depth) => [
   '{',
   ...lines,
-  `${braceIndent[depth]}}`,
+  `${braceIndent(depth)}}`,
 ].join('\n');
 
 const stringify = (data, depth) => {
@@ -21,15 +21,15 @@ const stringify = (data, depth) => {
 };
 
 const makeStylishDiff = (tree) => {
-  const iters = (node, depth) => {
+  const iter = (node, depth) => {
     switch (node.type) {
       case 'root': {
-        const result = node.children.flatMap((child) => iters(child, depth));
+        const result = node.children.flatMap((child) => iter(child, depth));
         return joinStrings(result, depth);
       }
       case 'nested': {
-        const result = node.children.flatMap((child) => iters(child, depth + 1));
-        return `${currentIndent(depth)}  ${node.key}: ${joinStrings(result, depth + 1)}`;
+        const childrenToString = node.children.flatMap((child) => iter(child, depth + 1));
+        return `${currentIndent(depth)}  ${node.key}: ${joinStrings(childrenToString, depth + 1)}`;
       }
       case 'added': {
         return `${currentIndent(depth)}+ ${node.key}: ${stringify(node.value, depth + 1)}`;
@@ -38,18 +38,18 @@ const makeStylishDiff = (tree) => {
         return `${currentIndent(depth)}- ${node.key}: ${stringify(node.value, depth + 1)}`;
       }
       case 'changed': {
-        return [`${currentIndent[depth]}- ${node.key}: ${stringify(node.value, depth + 1)}`,
-          `${currentIndent(depth)}+ ${node.key}: ${stringify(node.value2, depth + 1)}`];
+        return [`${currentIndent(depth)}- ${node.key}: ${stringify(node.oldValue, depth + 1)}`,
+          `${currentIndent(depth)}+ ${node.key}: ${stringify(node.newValue, depth + 1)}`];
       }
       case 'unchanged': {
-        return `${currentIndent(depth)} ${node.key}: ${stringify(node.value, depth + 1)}`;
+        return `${currentIndent(depth)}  ${node.key}: ${stringify(node.value, depth + 1)}`;
       }
       default: {
-        throw Error('Incorrect data');
+        throw Error('Uncorrect data');
       }
     }
   };
-  return iters(tree, 1);
+  return iter(tree, 1);
 };
 
 export default makeStylishDiff;

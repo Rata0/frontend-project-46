@@ -1,15 +1,15 @@
-import plainFormat from './plain.js';
-import stylishFormat from './stylish.js';
+import makePlain from './plain.js';
+import makeStylish from './stylish.js';
 
 export default function formatter(tree, format) {
   switch (format) {
     case 'stylish':
-      return stylishFormat(tree);
+      return makeStylish(tree);
     case 'plain':
-      return plainFormat(tree);
+      return makePlain(tree);
     case 'json':
       return JSON.stringify(tree);
     default:
-      throw new Error('Введите нужный формат');
+      throw new Error('Uncorrect data');
   }
 }
